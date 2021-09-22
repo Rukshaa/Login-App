@@ -14,11 +14,16 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
 
+  // define a global key of type FormState
+
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(48),
       child: Form(
+        key: formKey,
         child: Column(
           children: [
             buildEmailField(),
@@ -43,6 +48,15 @@ class _LoginScreenState extends State<LoginScreen> {
         prefixIcon: Icon(Icons.email),
         border: OutlineInputBorder()
       ),
+      validator: (value){
+        if(value!.contains("@") && value.contains(".")){
+          return null;
+        }
+      return "Invalid email address";
+      },
+      onSaved: (value){
+        email=value;
+      },
     );
   }
 
@@ -56,6 +70,15 @@ class _LoginScreenState extends State<LoginScreen> {
         prefixIcon: Icon(Icons.lock),
         border:OutlineInputBorder()
       ),
+      validator: (value){
+        if(value!.length>4){
+          return null;
+        }
+        return "Password must be at least 5 characters long";
+      },
+        onSaved: (value) {
+          password = value;
+        },
     );
   }
 
@@ -77,12 +100,22 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
       onChanged: (val) {
         gender = val;
+        print("Gender $val");
       },
       decoration: InputDecoration(
         labelText: "Select your gender",
         hintText: "male",
         border: OutlineInputBorder(),
       ),
+      validator: (value){
+        if(value!=null){
+          return null;
+        }
+        return "Please select your gender";
+      },
+        onSaved: (value) {
+          gender = value;
+        },
     );
   }
 
@@ -93,6 +126,18 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Text("Submit"),
         onPressed: () {
 //access the form and try to validate each of children
+//           bool? validForm =formKey.currentState?.validate();
+//           if(validForm== true){
+//             // attempt to extract all the values from formField.
+//           }
+//
+          bool validForm =formKey.currentState!.validate();
+       if(validForm){
+         // attempt to extract all the values from formField.
+
+       formKey.currentState!.save();
+       print("Email is $email, Password is $password and Gender is $gender");
+       }
         },
         style: ElevatedButton.styleFrom(
           primary: Colors.green,
