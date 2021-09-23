@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:login_app/src/mixins/validation_mixin.dart';
+import 'package:login_app/src/screens/second_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -8,7 +10,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with ValidationMixin {
 
   String? gender;
   String? email;
@@ -20,20 +22,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(48),
-      child: Form(
-        key: formKey,
-        child: Column(
-          children: [
-            buildEmailField(),
-            SizedBox(height: 8),
-            buildPasswordField(),
-            SizedBox(height: 8),
-            buildGenderField(),
-            SizedBox(height: 8),
-            buildSubmitButton()
-          ],
+    return Center(
+      child: Container(
+        margin: EdgeInsets.all(48),
+        child: Form(
+          key: formKey,
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildEmailField(),
+                  SizedBox(height: 8),
+                  buildPasswordField(),
+                  SizedBox(height: 8),
+                  buildGenderField(),
+                  SizedBox(height: 8),
+                  buildSubmitButton(context),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -48,12 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
         prefixIcon: Icon(Icons.email),
         border: OutlineInputBorder()
       ),
-      validator: (value){
-        if(value!.contains("@") && value.contains(".")){
-          return null;
-        }
-      return "Invalid email address";
-      },
+      validator: validateEmail, // passing the reference
       onSaved: (value){
         email=value;
       },
@@ -70,12 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
         prefixIcon: Icon(Icons.lock),
         border:OutlineInputBorder()
       ),
-      validator: (value){
-        if(value!.length>4){
-          return null;
-        }
-        return "Password must be at least 5 characters long";
-      },
+      validator: validatePassword,
         onSaved: (value) {
           password = value;
         },
@@ -107,19 +107,14 @@ class _LoginScreenState extends State<LoginScreen> {
         hintText: "male",
         border: OutlineInputBorder(),
       ),
-      validator: (value){
-        if(value!=null){
-          return null;
-        }
-        return "Please select your gender";
-      },
+      validator: validateGender,
         onSaved: (value) {
           gender = value;
         },
     );
   }
 
-  Widget buildSubmitButton() {
+  Widget buildSubmitButton(BuildContext context) {
     return Container(
       width: double.infinity,
       child: ElevatedButton(
@@ -137,6 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
        formKey.currentState!.save();
        print("Email is $email, Password is $password and Gender is $gender");
+       Navigator.of(context).push(
+           MaterialPageRoute(
+             builder: (BuildContext context){
+               return SecondScreen();
+             },
+           ),
+       );
        }
         },
         style: ElevatedButton.styleFrom(

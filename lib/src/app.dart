@@ -9,8 +9,10 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme:ThemeData.dark(),
-      home: Scaffold(
-        body: LoginScreen(),
+      home: SafeArea(
+        child: Scaffold(
+          body: LoginScreen(),
+        ),
       ),
     );
 
